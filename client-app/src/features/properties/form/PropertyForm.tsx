@@ -7,8 +7,9 @@ interface Props {
     property: Property | undefined;
     closeForm: () => void;
     create0rEdit: (property :Property) => void;
+    submitting: boolean;
 }
-export default function PropertyForm({property: selectedProperty, closeForm, create0rEdit}: Props) {
+export default function PropertyForm({property: selectedProperty, closeForm, create0rEdit, submitting}: Props) {
 
     const initialState = selectedProperty ??{
         id: '',
@@ -50,11 +51,11 @@ export default function PropertyForm({property: selectedProperty, closeForm, cre
                 <Form.Input placeholder='Number of bathrooms' value={property.bathrooms} name='bathrooms' onChange={handleInputChange}/>
                 <Form.Input placeholder='Price per sqm' value={property.pricePersqm} name='pricePersqm' onChange={handleInputChange}/>
                 <Form.Input placeholder='Location' value={property.location} name='location' onChange={handleInputChange}/>
-                <Form.Input placeholder='Deadline of investment' value={property.pDate} name='pDate' onChange={handleInputChange}/>
+                <Form.Input type='date' placeholder='Deadline of investment' value={property.pDate} name='pDate' onChange={handleInputChange}/>
                 <Form.Input placeholder='Investment type' value={property.iType} name='iType' onChange={handleInputChange}/>
                 <Form.Input placeholder='Minimum investment' value={property.investnow} name='investnow' onChange={handleInputChange}/>
                 <Form.Input placeholder='Price of property' value={property.price} name='price' onChange={handleInputChange}/>
-                <Button floated='right' positive type='submit' content='Submit' />
+                <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>

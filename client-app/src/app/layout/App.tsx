@@ -1,19 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Container } from 'semantic-ui-react';
 import { Property } from '../models/property';
 import NavBar from './NavBar';
 import PropertyDashboard from '../../features/properties/dashboard/PropertyDashboard';
 import {v4 as uuid} from 'uuid';
+import agent from '../api/agent';
+import LoadingComponent from './LoadingComponent';
 function App() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
 
-    axios.get<Property[]>('http://localhost:5000/api/Properties').then(response => {
-      setProperties(response.data);
+    agent.Properties.list().then(response => {
+      let properties: Property[] = [];
+      response.forEach(property => {
+        property.pDate = property.pDate.split('T')[0];
+        properties.push(property);
+      })
+      setProperties(properties);
+      setLoading(false);
     })
   }, [])
 
@@ -35,16 +44,35 @@ function App() {
   }
   
   function handleCreate0rEditProperty(property: Property) {
-    property.id
-      ? setProperties([...properties.filter(x => x.id !==property.id), property])
-      : setProperties([...properties,{...property, id: uuid()}]);
-    setEditMode(false);
-    setSelectedProperty(property);
+    setSubmitting(true);
+    if (property.id){
+      agent.Properties.update(property).then(() => {
+        setProperties([...properties.filter(x => x.id !==property.id), property])
+        setSelectedProperty(property);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    } else{
+      property.id = uuid();
+      agent.Properties.create(property).then(() => {
+        setProperties([...properties, property])
+        setSelectedProperty(property);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    }
   }
 
   function handleDeleteProperty(id: string) {
+    setSubmitting(true);
+    agent.Properties.delete(id).then(() => {
+      setProperties([...properties.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
     setProperties([...properties.filter(x => x.id !== id)])
   }
+
+  if(loading) return <LoadingComponent content='Loading app' />
 
 
 
@@ -62,6 +90,7 @@ function App() {
         closeForm={handleFormClose}
         create0rEdit={handleCreate0rEditProperty}
         deleteProperty={handleDeleteProperty}
+        submitting={submitting}
 
         />
       </Container>  

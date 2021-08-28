@@ -15,9 +15,10 @@ interface Props {
     closeForm: () => void;
     create0rEdit: (property: Property) => void;
     deleteProperty: (id: string) => void;
+    submitting: boolean;
 }
 
-export default function PropertyDashboard({properties, selectedProperty, selectProperty, cancelSelectProperty, editMode, openForm, closeForm, create0rEdit, deleteProperty}: Props) {
+export default function PropertyDashboard({properties, selectedProperty, selectProperty, cancelSelectProperty, editMode, openForm, closeForm, create0rEdit, deleteProperty, submitting}: Props) {
     return(
 
         <Grid>
@@ -25,6 +26,7 @@ export default function PropertyDashboard({properties, selectedProperty, selectP
                 <PropertyList properties={properties} 
                 selectProperty={selectProperty} 
                 deleteProperty={deleteProperty}
+                submitting={submitting}
                 />
             </Grid.Column>
             <Grid.Column width='6'>
@@ -34,7 +36,12 @@ export default function PropertyDashboard({properties, selectedProperty, selectP
                 cancelSelectProperty={cancelSelectProperty}
                 openForm={openForm} />}
                 {editMode&&
-                <PropertyForm closeForm={closeForm} property={selectedProperty} create0rEdit={create0rEdit} />}
+                <PropertyForm 
+                    closeForm={closeForm} 
+                        property={selectedProperty} 
+                        create0rEdit={create0rEdit}
+                        submitting={submitting}
+                        />}
             </Grid.Column>
         </Grid>
     )

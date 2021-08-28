@@ -9,8 +9,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210812170745_initialcraete")]
-    partial class initialcraete
+    [Migration("20210825182836_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,11 +27,11 @@ namespace Persistence.Migrations
                     b.Property<string>("About")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Bathrooms")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Bathrooms")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Bedrooms")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Bedrooms")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("IType")
                         .HasColumnType("TEXT");
@@ -48,8 +48,8 @@ namespace Persistence.Migrations
                     b.Property<double>("PricePersqm")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Size")
-                        .HasColumnType("REAL");
+                    b.Property<string>("Size")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");

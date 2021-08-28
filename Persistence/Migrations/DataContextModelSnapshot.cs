@@ -25,11 +25,11 @@ namespace Persistence.Migrations
                     b.Property<string>("About")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Bathrooms")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Bathrooms")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Bedrooms")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Bedrooms")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("IType")
                         .HasColumnType("TEXT");
@@ -46,8 +46,8 @@ namespace Persistence.Migrations
                     b.Property<double>("PricePersqm")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("Size")
-                        .HasColumnType("REAL");
+                    b.Property<string>("Size")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");

@@ -9,9 +9,9 @@ namespace Domain
         public string Title { get; set; }
         public string About { get; set; }
         public  string WhytoInvest { get; set; }
-        public double Size { get; set; }
-        public int Bedrooms { get; set; }
-        public int Bathrooms { get; set; }
+        public string Size { get; set; }
+        public string Bedrooms { get; set; }
+        public string Bathrooms { get; set; }
         public double PricePersqm { get; set; }
         public string Location { get; set; }
         public DateTime PDate { get; set; }

@@ -1,16 +1,14 @@
+import { observer } from 'mobx-react-lite';
 import React, { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
-import { Property } from '../../../app/models/property';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    property: Property | undefined;
-    closeForm: () => void;
-    create0rEdit: (property :Property) => void;
-    submitting: boolean;
-}
-export default function PropertyForm({property: selectedProperty, closeForm, create0rEdit, submitting}: Props) {
+export default observer( function PropertyForm() {
 
+    const {propertyStore} = useStore();
+    const {selectedProperty, closeForm, createProperty, updateProperty, loading} = propertyStore;
+    
     const initialState = selectedProperty ??{
         id: '',
         pType: '',
@@ -31,10 +29,10 @@ export default function PropertyForm({property: selectedProperty, closeForm, cre
     const [property, setProperty] = useState(initialState);
     
     function handleSubmit() {
-          create0rEdit(property);
+          property.id ? updateProperty(property) : createProperty(property);
     }
 
-    function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) {
+    function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>) {
         const {name, value} = event.target;
         setProperty({...property, [name]:value})
     }
@@ -55,9 +53,9 @@ export default function PropertyForm({property: selectedProperty, closeForm, cre
                 <Form.Input placeholder='Investment type' value={property.iType} name='iType' onChange={handleInputChange}/>
                 <Form.Input placeholder='Minimum investment' value={property.investnow} name='investnow' onChange={handleInputChange}/>
                 <Form.Input placeholder='Price of property' value={property.price} name='price' onChange={handleInputChange}/>
-                <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
+                <Button loading={loading} floated='right' positive type='submit' content='Submit' />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )
-}
+})

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Button, Card, Image } from 'semantic-ui-react';
-import { Property } from '../../../app/models/property';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    property: Property;
-    cancelSelectProperty: () => void;
-    openForm: (id: string) => void;
-}
-export default function PropertyDetails({property, cancelSelectProperty, openForm}: Props) {
+export default function PropertyDetails() {
+  const {propertyStore} = useStore();
+  const {selectedProperty: property, openForm, cancelSelectedProperty} = propertyStore;
+
+  if(!property) return <LoadingComponent />;
     return (
 
-        <Card>
+        <Card fluid>
         <Image src={`/assets/categoryImages/${property.location}.jpg`} />
         <Card.Content>
           <Card.Header>{property.title}</Card.Header>
@@ -24,7 +24,7 @@ export default function PropertyDetails({property, cancelSelectProperty, openFor
         <Card.Content extra>
             <Button.Group widths='2'>
                 <Button onClick={() => openForm(property.id)} basic color='blue' content='Edit' />
-                <Button onClick={cancelSelectProperty} basic color='grey' content='Cancel' />
+                <Button onClick={cancelSelectedProperty} basic color='grey' content='Cancel' />
             </Button.Group>
         </Card.Content>
       </Card>

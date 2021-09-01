@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { SyntheticEvent } from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 
@@ -30,7 +31,7 @@ export default observer (function PropertyList() {
                                 <div>{property.location}, {property.price}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button onClick={() => propertyStore.selectProperty(property.id)} floated='right' content='View' color='blue' />
+                                <Button as={Link} to={`/properties/${property.id}`} floated='right' content='View' color='blue' />
                                 <Button 
                                     name={property.id}
                                     loading={loading && target === property.id} 
@@ -42,6 +43,7 @@ export default observer (function PropertyList() {
                             </Item.Extra>
                         </Item.Content>
                     </Item>
+                
                 ))}
 
             </Item.Group>

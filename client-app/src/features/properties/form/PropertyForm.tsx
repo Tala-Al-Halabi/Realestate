@@ -1,15 +1,21 @@
 import { observer } from 'mobx-react-lite';
 import React, { ChangeEvent } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Button, Form, Segment } from 'semantic-ui-react';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
+import {v4 as uuid} from 'uuid';
 
 export default observer( function PropertyForm() {
 
+    const history = useHistory();
     const {propertyStore} = useStore();
-    const {selectedProperty, closeForm, createProperty, updateProperty, loading} = propertyStore;
+    const {createProperty, updateProperty, loading, loadProperty, loadingInitial} = propertyStore;
+    const {id} = useParams<{id: string}>();
     
-    const initialState = selectedProperty ??{
+    const [property, setProperty] = useState({
         id: '',
         pType: '',
         title: '', 
@@ -23,19 +29,31 @@ export default observer( function PropertyForm() {
         pDate: '',
         iType: '',
         investnow: '',
-        price: '',
-    }
+        price: ''
+    });
 
-    const [property, setProperty] = useState(initialState);
+    useEffect(() => {
+        if(id) loadProperty(id).then(property => setProperty(property!))
+    }, [id, loadProperty]);
+
     
     function handleSubmit() {
-          property.id ? updateProperty(property) : createProperty(property);
+        if (property.id.length === 0) {
+            let newProperty = {
+                ...property,
+                id: uuid()
+            };
+            createProperty(newProperty).then(() => history.push(`/properties/${newProperty.id}`))
+        } else {
+            updateProperty(property).then(() => history.push(`/properties/${property.id}`)) }
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement>) {
         const {name, value} = event.target;
         setProperty({...property, [name]:value})
     }
+
+    if (loadingInitial) return <LoadingComponent content='Loading property...'/>
     
     return (
         <Segment clearing>
@@ -54,7 +72,7 @@ export default observer( function PropertyForm() {
                 <Form.Input placeholder='Minimum investment' value={property.investnow} name='investnow' onChange={handleInputChange}/>
                 <Form.Input placeholder='Price of property' value={property.price} name='price' onChange={handleInputChange}/>
                 <Button loading={loading} floated='right' positive type='submit' content='Submit' />
-                <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
+                <Button  as={Link} to='/properties' floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )

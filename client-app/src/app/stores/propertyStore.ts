@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Property } from "../models/property";
-import {v4 as uuid} from 'uuid';
 export default class PropertyStore{
    propertyRegistry = new Map<string, Property>();
    selectedProperty: Property | undefined = undefined;
@@ -20,43 +19,59 @@ export default class PropertyStore{
     }
 
     loadProperties =async () => {
+        this.loadingInitial = true;
         try{
             const properties = await agent.Properties.list();
-                properties.forEach(property => {
-                    property.pDate = property.pDate.split('T')[0];
-                    this.propertyRegistry.set(property.id, property);
-                  })
-                  this.setLoadingInitial(false);
+            properties.forEach(property => {
+                this.setProperty(property);
+            })
+            this.setLoadingInitial(false);
             
         } catch(error){
             console.log(error);
             this.setLoadingInitial(false);
         }
     }
+
+    loadProperty = async (id: string) => {
+        let property = this.getProperty(id);
+        if(property) {
+            this.selectedProperty = property;
+            return property;
+        } else{
+            this.loadingInitial = true;
+            try{
+                property = await agent.Properties.details(id);
+                this.setProperty(property);
+                runInAction(() =>{
+                    this.selectedProperty = property;
+                })
+                this.setLoadingInitial(false);
+                return property;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    private setProperty = (property: Property) => {
+        property.pDate = property.pDate.split('T')[0];
+        this.propertyRegistry.set(property.id, property);
+
+    }
+
+    private getProperty =(id: string) => {
+        return this.propertyRegistry.get(id);
+    }
+
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
 
     }
 
-    selectProperty = (id: string) => {
-        this.selectedProperty = this.propertyRegistry.get(id);
-    }
-
-    cancelSelectedProperty = () => {
-        this.selectedProperty = undefined;
-    }
-
-    openForm = (id?: string) => {
-        id ? this.selectProperty(id) : this.cancelSelectedProperty();
-        this.editMode = true; 
-    }
-    closeForm = () => {
-        this.editMode = false;
-    }
-
     createProperty = async (property: Property) => {
         this.loading = true;
-        property.id = uuid();
         try{
             await agent.Properties.create(property);
             runInAction(() => {
@@ -97,7 +112,6 @@ export default class PropertyStore{
             await agent.Properties.delete(id);
             runInAction(() => {
                 this.propertyRegistry.delete(id);
-                if (this.selectedProperty?.id === id) this.cancelSelectedProperty();
                 this.loading = false;
             })
 

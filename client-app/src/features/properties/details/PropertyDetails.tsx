@@ -1,13 +1,21 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
+import { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Button, Card, Image } from 'semantic-ui-react';
 import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
 
-export default function PropertyDetails() {
+export default observer( function PropertyDetails() {
   const {propertyStore} = useStore();
-  const {selectedProperty: property, openForm, cancelSelectedProperty} = propertyStore;
+  const {selectedProperty: property, loadProperty, loadingInitial} = propertyStore;
+  const {id} = useParams<{id: string}>();
 
-  if(!property) return <LoadingComponent />;
+  useEffect(() => {
+    if (id) loadProperty(id);
+    }, [id, loadProperty]);
+
+  if(loadingInitial || !property) return <LoadingComponent />;
     return (
 
         <Card fluid>
@@ -23,10 +31,10 @@ export default function PropertyDetails() {
         </Card.Content>
         <Card.Content extra>
             <Button.Group widths='2'>
-                <Button onClick={() => openForm(property.id)} basic color='blue' content='Edit' />
-                <Button onClick={cancelSelectedProperty} basic color='grey' content='Cancel' />
+                <Button as={Link} to={`/manage/${property.id}`} basic color='blue' content='Edit' />
+                <Button as={Link} to='/properties' basic color='grey' content='Cancel' />
             </Button.Group>
         </Card.Content>
       </Card>
     )
-}
+})

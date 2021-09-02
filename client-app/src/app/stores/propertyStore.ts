@@ -18,6 +18,16 @@ export default class PropertyStore{
              Date.parse(a.pDate) - Date.parse(b.pDate));
     }
 
+    get groupedProperties() {
+        return Object.entries(
+            this.propertiesByDate.reduce((properties, property) => {
+                const date = property.pDate;
+                properties[date] = properties[date] ? [...properties[date], property] : [property];
+                return properties;
+            }, {} as {[key: string]: Property[]})
+        )
+    }
+
     loadProperties =async () => {
         this.loadingInitial = true;
         try{

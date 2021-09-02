@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
+import PropertyFilters from "./PropertyFilters";
 import PropertyList from "./PropertyList";
 
 export default observer(function PropertyDashboard() {
@@ -23,7 +24,7 @@ export default observer(function PropertyDashboard() {
                 <PropertyList />
             </Grid.Column>
             <Grid.Column width='6'>
-              <h2>Property filters</h2>
+              <PropertyFilters />
             </Grid.Column>
         </Grid>
     )

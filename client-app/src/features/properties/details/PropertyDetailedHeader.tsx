@@ -1,5 +1,7 @@
+import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
+import { Link } from 'react-router-dom';
 import {Button, Header, Item, Segment, Image} from 'semantic-ui-react'
 import { Property } from '../../../app/models/property';
 
@@ -35,7 +37,7 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
                                     content={property.title}
                                     style={{color: 'white'}}
                                 />
-                                <p>{property.pDate}</p>
+                                <p>{format (property.pDate!, 'dd MMM yyyy ')}</p>
                                 <p>
                                     Hosted by <strong>Bob</strong>
                                 </p>
@@ -47,7 +49,7 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
             <Segment clearing attached='bottom'>
                 <Button color='teal'>Invest Property</Button>
                 <Button>Cancel Invest</Button>
-                <Button color='orange' floated='right'>
+                <Button as={Link} to={`/manage/${property.id}`} color='orange' floated='right'>
                     Manage Investment
                 </Button>
             </Segment>

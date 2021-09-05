@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -26,11 +27,13 @@ namespace API.Controllers
            var result = await Mediator.Send(new Details.Query{ID = id});
            return HandleResult(result);
         }
+        
         [HttpPost]
         public async Task<IActionResult> CreateProperty(Property property)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Property = property}));
         }
+
 
         [HttpPut("{id}")]
 

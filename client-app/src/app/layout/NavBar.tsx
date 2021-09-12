@@ -12,7 +12,6 @@ export default function NavBar() {
                    Properties
                 </Menu.Item> 
                 <Menu.Item as={NavLink} to='/properties' name='Properties' />
-                <Menu.Item as={NavLink} to='/errors' name='Errors' />
                 <Menu.Item>
                     <Button as={NavLink} to='/createProperty' positive content='Create Property' />
                 </Menu.Item>      

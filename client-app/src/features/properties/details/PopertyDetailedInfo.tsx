@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
 import {Segment, Grid, Icon} from 'semantic-ui-react'
@@ -33,7 +32,7 @@ export default observer(function PropertyDetailedInfo({property}: Props) {
                     </Grid.Column>
                     <Grid.Column width={15}>
             <span>
-              {format(property.pDate!, 'dd MMM yyyy h:mm aa')}
+              {property.pDate}
             </span>
                     </Grid.Column>
                 </Grid>

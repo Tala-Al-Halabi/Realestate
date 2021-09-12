@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Property } from "../models/property";
@@ -7,7 +6,7 @@ export default class PropertyStore{
    selectedProperty: Property | undefined = undefined;
    editMode = false;
    loading = false;
-   loadingInitial = false;
+   loadingInitial = true;
 
 
     constructor() {
@@ -16,13 +15,13 @@ export default class PropertyStore{
 
     get propertiesByDate() {
         return Array.from(this.propertyRegistry.values()).sort((a, b) =>
-            a.pDate!.getTime() - b.pDate!.getTime());
+             Date.parse(a.pDate) - Date.parse(b.pDate));
     }
 
     get groupedProperties() {
         return Object.entries(
             this.propertiesByDate.reduce((properties, property) => {
-                const date = format(property.pDate!, 'dd MMM yyyy');
+                const date = property.pDate;
                 properties[date] = properties[date] ? [...properties[date], property] : [property];
                 return properties;
             }, {} as {[key: string]: Property[]})
@@ -67,7 +66,7 @@ export default class PropertyStore{
     }
 
     private setProperty = (property: Property) => {
-        property.pDate = new Date (property.pDate!);
+        property.pDate = property.pDate.split('T')[0];
         this.propertyRegistry.set(property.id, property);
 
     }

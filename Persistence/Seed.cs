@@ -3,28 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
-using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
+        public static async Task SeedData(DataContext context)
         {
-            if (!userManager.Users.Any())
-            {
-                var users = new List<AppUser>
-                {
-                    new AppUser{DisplayName = "Bob", UserName="bob", Email="bob@test.com"},
-                    new AppUser{DisplayName = "Jame", UserName="jame", Email="jame@test.com"},
-                    new AppUser{DisplayName = "Tom", UserName="tom", Email="tom@test.com"},
-                };
-
-                foreach (var user in users )
-                {
-                    await userManager.CreateAsync(user, "Pa$$w0rd");
-                }
-            }
             if (context.Properties.Any()) return;
             
             var properties = new List<Property>
@@ -66,24 +51,6 @@ namespace Persistence
                 },
 
                 new Property
-                {
-                    PType = "Appartment",
-                    Title = "220 sqm Duplex in Gated Community in Ballouneh",
-                    About = "Standing atop the hills of Ballouneh, Pinea is gated community built around a central common garden that brings the residents together in a community-like atmosphere. The landscape greenery within reflects the outside natural beauty that distinguishes the region. TECHNICAL SPECIFICATIONS: Pinea is conceived in accordance with the highest quality standards to provide residents with the very best in convenience, safety and practicality. General specifications and accommodations:- Visitors parking- Swimming pool- Gymnasium- landscaped area.- Security 24/7- Back up generators 24/7- Artesian well- Electricl earhing system- Anti-seismic design- External natural stone cladding- Double exterior walls- Waterproof protection for embedded walls- Water protection for terraces- Aluminium- SIDEM 2000 profile or equivalent- Electric rolling shutters in bedrooms- Double glazing- Lifts Mitsulift or equivalent.",
-                    WhytoInvest = "A quality Duplex in a gated community in Ballouneh, which is the center of Keserwan and is suitable for both summer and winter. The community has 24/7 security, playgrounds, swimming pool, and gym, which makes it an ideal home for those who would like to the lifestyle they look for. This property used to sell at $290,000 before the financial crisis that hit Lebanon in 2019/2020, which makes a huge upside for price appreciation potential. This property is indented to be sold on a Lease-to-Own program, which will deliver an immediate 10% capital gains for the investors and an ongoing steady annual income of 4.3% (paid on a quarterly basis). The total 5 year expected return ramps up to 31.7% of your invested capital.",
-                    Size = "220 sqm",
-                    Bedrooms = "3",
-                    Bathrooms = "4",
-                    PricePersqm = 595,
-                    Location = "Ballouneh",
-                    PDate = DateTime.Now.AddMonths(-1),
-                    IType = "Lease to sell",
-                    investnow = 500,
-                    price = 130900,
-                  
-                },
-
-                 new Property
                 {
                     PType = "Appartment",
                     Title = "220 sqm Duplex in Gated Community in Ballouneh",

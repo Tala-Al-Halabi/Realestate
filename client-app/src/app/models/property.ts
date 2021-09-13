@@ -11,7 +11,7 @@
         bathrooms: string;
         pricePersqm: string;
         location: string;
-        pDate: string;
+        pDate: Date | null;
         iType: string;
         investnow: string;
         price: string;

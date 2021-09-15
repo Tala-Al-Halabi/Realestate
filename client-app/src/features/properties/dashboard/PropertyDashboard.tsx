@@ -14,7 +14,7 @@ export default observer(function PropertyDashboard() {
         if (propertyRegistry.size <=1)  loadProperties();
     }, [propertyRegistry.size, loadProperties])
 
-    if(propertyStore.loadingInitial) return <LoadingComponent content='Loading app' />
+    if(propertyStore.loadingInitial) return <LoadingComponent content='Loading properties...' />
 
 
     return(

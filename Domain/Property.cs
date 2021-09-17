@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Domain
 {
@@ -18,6 +19,8 @@ namespace Domain
         public string IType { get; set; }
         public double investnow { get; set; }
         public double price { get; set; }
+        public bool IsCancelled { get; set; }
+        public ICollection<PropertyInvestor> Investors { get; set; } = new List<PropertyInvestor>();
 
     }
 

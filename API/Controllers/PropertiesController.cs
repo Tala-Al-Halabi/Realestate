@@ -23,13 +23,13 @@ namespace API.Controllers
         {
             return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> CreateProperty(Property property)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Property = property}));
         }
-
+        [Authorize(Policy = "IsPropertyHost")]
         [HttpPut("{id}")]
 
         public async Task<IActionResult> EditProperty(Guid id, Property property)
@@ -39,10 +39,16 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-
+        [Authorize(Policy = "IsPropertyHost")]
         public async Task<IActionResult> DeleteProperty(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command{Id = id}));
+        }
+
+        [HttpPost("{id}/invest")]
+        public async Task<IActionResult> Invest(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateInvestment.Command{Id = id}));
         }
     }
 } 

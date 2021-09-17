@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,24 +15,30 @@ namespace Application.Properties
 {
     public class List
     {
-        public class Query : IRequest<Result<List<Property>>> { }
+        public class Query : IRequest<Result<List<PropertyDto>>> { }
 
 
 
-        public class Handler : IRequestHandler<Query, Result<List<Property>>>
+        public class Handler : IRequestHandler<Query, Result<List<PropertyDto>>>
         {
             private readonly DataContext _context;
             private readonly ILogger<List> _logger;
-            public Handler(DataContext context, ILogger<List> logger)
+            private readonly IMapper _mapper;
+            public Handler(DataContext context, ILogger<List> logger, IMapper mapper)
             {
+                _mapper = mapper;
                 _logger = logger;
                 _context = context;
 
             }
 
-            public async Task<Result<List<Property>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<PropertyDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                return Result<List<Property>>.Success(await _context.Properties.ToListAsync(cancellationToken));
+                var properties = await _context.Properties
+                    .ProjectTo<PropertyDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken);
+
+                return Result<List<PropertyDto>>.Success(properties);
             }
         }
 

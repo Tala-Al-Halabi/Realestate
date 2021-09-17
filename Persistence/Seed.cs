@@ -9,9 +9,10 @@ namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
+        public static async Task SeedData(DataContext context, 
+            UserManager<AppUser> userManager)
         {
-            if (!userManager.Users.Any())
+             if (!userManager.Users.Any() && !context.Properties.Any())
             {
                 var users = new List<AppUser>
                 {
@@ -39,9 +40,6 @@ namespace Persistence
                 {
                     await userManager.CreateAsync(user, "Pa$$w0rd");
                 }
-            }
-
-            if (context.Properties.Any()) return;
             
             var properties = new List<Property>
             {
@@ -60,6 +58,14 @@ namespace Persistence
                     IType = "Lease To Sell",
                     investnow = 500,
                     price = 321700,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[0],
+                                IsHost = true
+                            }
+                        }
                   
                 },
 
@@ -78,6 +84,19 @@ namespace Persistence
                     IType = "Own and Gain",
                     investnow = 500,
                     price = 94900,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[0],
+                                IsHost = true
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = false
+                            },
+                        }
                   
                 },
 
@@ -96,6 +115,19 @@ namespace Persistence
                     IType = "Lease to sell",
                     investnow = 500,
                     price = 130900,
+                     Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[2],
+                                IsHost = true
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = false
+                            },
+                        }
                   
                 },
 
@@ -114,13 +146,179 @@ namespace Persistence
                     IType = "Lease to sell",
                     investnow = 500,
                     price = 90000,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[0],
+                                IsHost = true
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[2],
+                                IsHost = false
+                            },
+                        }
                   
                 },
-               
+
+                
+                new Property
+                {
+                    PType = "Appartment",
+                    Title = "3 BR Apartment in the Center of Aramoun. Strategic Location with Sea and Airport View",
+                    About = "Located in center of Daouha Aramoun (next to the statue), next to schools, supermarkets, and the souk. 2 minutes drive to the main highway to Beirut. 5 minutes drive to the airport.",
+                    WhytoInvest = "This property has been reserved by the home seeker with 10% downpayment, which makes its forecasted return very accurate with the agreement in place with the home seeker. Your investment will deliver 32.1% in 5 years. Your income will be paid on a quarterly basis.",
+                    Size = "210 sqm",
+                    Bedrooms = "3",
+                    Bathrooms = "4",
+                    PricePersqm = 429,
+                    Location = "Aramoun",
+                    PDate = DateTime.Now.AddMonths(-1),
+                    IType = "Lease to sell",
+                    investnow = 500,
+                    price = 90000,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = true                            
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[0],
+                                IsHost = false                            
+                            },
+                        }
+                  
+                },
+
+                 new Property
+                {
+                    PType = "Appartment",
+                    Title = "3 BR Apartment in the Center of Aramoun. Strategic Location with Sea and Airport View",
+                    About = "Located in center of Daouha Aramoun (next to the statue), next to schools, supermarkets, and the souk. 2 minutes drive to the main highway to Beirut. 5 minutes drive to the airport.",
+                    WhytoInvest = "This property has been reserved by the home seeker with 10% downpayment, which makes its forecasted return very accurate with the agreement in place with the home seeker. Your investment will deliver 32.1% in 5 years. Your income will be paid on a quarterly basis.",
+                    Size = "210 sqm",
+                    Bedrooms = "3",
+                    Bathrooms = "4",
+                    PricePersqm = 429,
+                    Location = "Aramoun",
+                    PDate = DateTime.Now.AddMonths(-1),
+                    IType = "Lease to sell",
+                    investnow = 500,
+                    price = 90000,
+                    Investors= new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = true                            
+                            }
+                        }
+                  
+                },
+
+                new Property
+                {
+                    PType = "Appartment",
+                    Title = "3 BR Apartment in the Center of Aramoun. Strategic Location with Sea and Airport View",
+                    About = "Located in center of Daouha Aramoun (next to the statue), next to schools, supermarkets, and the souk. 2 minutes drive to the main highway to Beirut. 5 minutes drive to the airport.",
+                    WhytoInvest = "This property has been reserved by the home seeker with 10% downpayment, which makes its forecasted return very accurate with the agreement in place with the home seeker. Your investment will deliver 32.1% in 5 years. Your income will be paid on a quarterly basis.",
+                    Size = "210 sqm",
+                    Bedrooms = "3",
+                    Bathrooms = "4",
+                    PricePersqm = 429,
+                    Location = "Aramoun",
+                    PDate = DateTime.Now.AddMonths(-1),
+                    IType = "Lease to sell",
+                    investnow = 500,
+                    price = 90000,
+                     Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[2],
+                                IsHost = true                            
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = false                            
+                            },
+                        }
+                        
+                  
+                },
+
+                new Property
+                {
+                    PType = "Appartment",
+                    Title = "3 BR Apartment in the Center of Aramoun. Strategic Location with Sea and Airport View",
+                    About = "Located in center of Daouha Aramoun (next to the statue), next to schools, supermarkets, and the souk. 2 minutes drive to the main highway to Beirut. 5 minutes drive to the airport.",
+                    WhytoInvest = "This property has been reserved by the home seeker with 10% downpayment, which makes its forecasted return very accurate with the agreement in place with the home seeker. Your investment will deliver 32.1% in 5 years. Your income will be paid on a quarterly basis.",
+                    Size = "210 sqm",
+                    Bedrooms = "3",
+                    Bathrooms = "4",
+                    PricePersqm = 429,
+                    Location = "Aramoun",
+                    PDate = DateTime.Now.AddMonths(-1),
+                    IType = "Lease to sell",
+                    investnow = 500,
+                    price = 90000,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[0],
+                                IsHost = true                            
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[2],
+                                IsHost = false                            
+                            },
+                        }
+                  
+                },
+
+                new Property
+                {
+                    PType = "Appartment",
+                    Title = "3 BR Apartment in the Center of Aramoun. Strategic Location with Sea and Airport View",
+                    About = "Located in center of Daouha Aramoun (next to the statue), next to schools, supermarkets, and the souk. 2 minutes drive to the main highway to Beirut. 5 minutes drive to the airport.",
+                    WhytoInvest = "This property has been reserved by the home seeker with 10% downpayment, which makes its forecasted return very accurate with the agreement in place with the home seeker. Your investment will deliver 32.1% in 5 years. Your income will be paid on a quarterly basis.",
+                    Size = "210 sqm",
+                    Bedrooms = "3",
+                    Bathrooms = "4",
+                    PricePersqm = 429,
+                    Location = "Aramoun",
+                    PDate = DateTime.Now.AddMonths(-1),
+                    IType = "Lease to sell",
+                    investnow = 500,
+                    price = 90000,
+                    Investors = new List<PropertyInvestor>
+                        {
+                            new PropertyInvestor
+                            {
+                                AppUser = users[2],
+                                IsHost = true                            
+                            },
+                            new PropertyInvestor
+                            {
+                                AppUser = users[1],
+                                IsHost = false                            
+                            },
+                        }
+                  
+                },
+
             };
 
             await context.Properties.AddRangeAsync(properties);
             await context.SaveChangesAsync();
+        }
         }
     }
 }

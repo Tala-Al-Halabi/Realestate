@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from  'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
-import { Property } from "../models/property";
+import { Property, PropertyFormValues } from "../models/property";
 import { User, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
 
@@ -68,9 +68,10 @@ const requests = {
 const Properties = {
     list: () => requests.get<Property[]>('/properties'),
     details: (id: string) => requests.get<Property>(`/properties/${id}`),
-    create: (property: Property) => axios.post<void>('/properties', property),
-    update: (property: Property) => axios.put<void>(`/properties/${property.id}`, property),
-    delete: (id: string) => axios.delete<void>(`/properties/${id}`)
+    create: (property: PropertyFormValues) => requests.post<void>('/properties', property),
+    update: (property: PropertyFormValues) => requests.put<void>(`/properties/${property.id}`, property),
+    delete: (id: string) => requests.del<void>(`/properties/${id}`),
+    invest: (id: string) => requests.post<void>(`/properties/${id}/invest`, {})
 }
 
 const Account = {

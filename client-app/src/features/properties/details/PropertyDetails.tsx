@@ -29,7 +29,7 @@ export default observer( function PropertyDetails() {
            <PropertyDetailedChat />
          </Grid.Column>
          <Grid.Column width={6}>
-           <PropertyDetailedSidebar />
+           <PropertyDetailedSidebar property={property} />
          </Grid.Column>
        </Grid>
     )

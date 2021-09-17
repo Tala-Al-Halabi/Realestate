@@ -14,31 +14,16 @@ import MyTextArea from '../../../app/common/form/MyTextArea';
 import { investmentOptions } from '../../../app/common/options/investmentOptions';
 import MySelectInput from '../../../app/common/form/MySelectInput';
 import MyDateInput from '../../../app/common/form/MyDateInput';
-import { Property } from '../../../app/models/property';
+import {PropertyFormValues } from '../../../app/models/property';
 
 export default observer( function PropertyForm() {
 
     const history = useHistory();
     const {propertyStore} = useStore();
-    const {createProperty, updateProperty, loading, loadProperty, loadingInitial} = propertyStore;
+    const {createProperty, updateProperty, loadProperty, loadingInitial} = propertyStore;
     const {id} = useParams<{id: string}>();
     
-    const [property, setProperty] = useState<Property>({
-        id: '',
-        pType: '',
-        title: '', 
-        about: '',
-        whytoInvest: '',
-        size: '',
-        bedrooms: '',
-        bathrooms: '',
-        pricePersqm: '',
-        location: '',
-        pDate: null,
-        iType: '',
-        investnow: '',
-        price: ''
-    });
+    const [property, setProperty] = useState<PropertyFormValues>(new PropertyFormValues());
 
     const validationSchema = Yup.object({
         title: Yup.string().required('The property title is required'),
@@ -57,12 +42,12 @@ export default observer( function PropertyForm() {
     })
 
     useEffect(() => {
-        if(id) loadProperty(id).then(property => setProperty(property!))
+        if(id) loadProperty(id).then(property => setProperty(new PropertyFormValues(property)))
     }, [id, loadProperty]);
 
     
-    function handleFormSubmit(property: Property) {
-        if (property.id.length === 0) {
+    function handleFormSubmit(property: PropertyFormValues) {
+        if (!property.id) {
             let newProperty = {
                 ...property,
                 id: uuid()
@@ -106,7 +91,7 @@ export default observer( function PropertyForm() {
                         <MyTextInput placeholder='Price of property' name='price' />
                         <Button 
                         disabled={isSubmitting || !dirty || !isValid}
-                        loading={loading} floated='right' 
+                        loading={isSubmitting} floated='right' 
                         positive type='submit' content='Submit' />
                         <Button  as={Link} to='/properties' floated='right' type='button' content='Cancel' />
                     </Form>

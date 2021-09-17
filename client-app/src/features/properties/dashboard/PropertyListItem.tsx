@@ -1,25 +1,43 @@
 import { format } from 'date-fns';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Icon, Item, Segment} from 'semantic-ui-react';
+import { Button, Icon, Item, Label, Segment} from 'semantic-ui-react';
 import { Property } from '../../../app/models/property';
+import PropertyListItemInvestor from './PropertyListItemInvestor';
 
 interface Props {
-    property: Property
+    property: Property;
 }
 export default function PropertyListItem({property}: Props) {
 
     return(
        <Segment.Group>
            <Segment>
+               {property.isCancelled &&
+                <Label attached='top' color='red' content='Cancelled' style={{textAlign: 'center'}} />
+               }
                <Item.Group>
                    <Item>
-                       <Item.Image size='tiny' circular src='/assets/user.png'/>
+                       <Item.Image style={{marginBottom: '3'}} size='tiny' circular src='/assets/user.png'/>
                        <Item.Content>
                             <Item.Header as={Link} to={`/properties/${property.id}`}>
                                {property.title} 
                             </Item.Header>
-                            <Item.Description>Hosted by Bob</Item.Description>
+                            <Item.Description>Hosted by {property.host?.displayName}</Item.Description>
+                            {property.isHost && (
+                                <Item.Description>
+                                    <Label basic color='orange'>
+                                        You are hosting this property
+                                    </Label>
+                                </Item.Description>    
+                            )}
+                            {property.isInvesting && !property.isHost && (
+                                <Item.Description>
+                                    <Label basic color='green'>
+                                        You are investing in this property
+                                    </Label>
+                                </Item.Description>    
+                            )}
                        </Item.Content>
                    </Item>
                </Item.Group>
@@ -31,7 +49,7 @@ export default function PropertyListItem({property}: Props) {
                </span> 
            </Segment>
            <Segment secondary>
-               Investors go here
+               <PropertyListItemInvestor  investors={property.investors!} />
            </Segment>
            <Segment clearing>
                <span>{property.about}</span>

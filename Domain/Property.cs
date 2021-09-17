@@ -9,7 +9,7 @@ namespace Domain
         public string PType { get; set; }
         public string Title { get; set; }
         public string About { get; set; }
-        public  string WhytoInvest { get; set; }
+        public string WhytoInvest { get; set; }
         public string Size { get; set; }
         public string Bedrooms { get; set; }
         public string Bathrooms { get; set; }

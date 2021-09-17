@@ -1,7 +1,9 @@
 import { format } from "date-fns";
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Property } from "../models/property";
+import { Profile } from "../models/profile";
+import { Property, PropertyFormValues } from "../models/property";
+import { store } from "./store";
 export default class PropertyStore{
    propertyRegistry = new Map<string, Property>();
    selectedProperty: Property | undefined = undefined;
@@ -67,6 +69,14 @@ export default class PropertyStore{
     }
 
     private setProperty = (property: Property) => {
+        const user = store.userStore.user;
+        if (user) {
+            property.isInvesting = property.investors!.some(
+                a => a.username === user.username
+            )
+            property.isHost = property.hostUsername === user.username;
+            property.host = property.investors?.find( x => x.username === property.hostUsername);
+        }
         property.pDate = new Date(property.pDate!);
         this.propertyRegistry.set(property.id, property);
 
@@ -81,39 +91,35 @@ export default class PropertyStore{
 
     }
 
-    createProperty = async (property: Property) => {
-        this.loading = true;
+    createProperty = async (property: PropertyFormValues) => {
+        const user = store.userStore.user;
+        const investor = new Profile(user!);
         try{
             await agent.Properties.create(property);
+            const newProperty = new Property(property);
+            newProperty.hostUsername = user!.username;
+            newProperty.investors = [investor];
+            this.setProperty(newProperty);
             runInAction(() => {
-                this.propertyRegistry.set(property.id, property);
-                this.selectedProperty = property;
-                this.editMode = false;
-                this.loading = false;
+                this.selectedProperty = newProperty;
             })
         }catch (error) {
             console.log(error); 
-            runInAction(() => {
-                this.loading = false;
-            })
         }
     }
 
-    updateProperty =  async (property: Property) => {
-        this.loading = true;
+    updateProperty =  async (property: PropertyFormValues) => {
         try{
             await agent.Properties.update(property);
             runInAction(() => {
-                this.propertyRegistry.set(property.id, property);
-                this.selectedProperty = property;
-                this.editMode = false;
-                this.loading = false;
+                if(property.id) {
+                    let updatedProperty = {...this.getProperty(property.id), ...property}
+                    this.propertyRegistry.set(property.id, updatedProperty as Property);
+                    this.selectedProperty = updatedProperty as Property;
+                }
             })
         }catch (error) {
             console.log(error); 
-            runInAction(() => {
-                this.loading = false;
-            })
         }
     }
 
@@ -131,6 +137,45 @@ export default class PropertyStore{
             runInAction(() => {
                 this.loading = false;
             })
+        }
+    }
+
+    updateInvestment = async () => {
+        const user = store.userStore.user;
+        this.loading = true;
+        try {
+            await agent.Properties.invest(this.selectedProperty!.id);
+            runInAction(() => {
+                if (this.selectedProperty?.isInvesting) {
+                    this.selectedProperty.investors = 
+                        this.selectedProperty.investors?.filter(a => a.username !== user?.username);
+                    this.selectedProperty.isInvesting = false;
+                } else {
+                    const investor = new Profile(user!);
+                    this.selectedProperty?.investors?.push(investor);
+                    this.selectedProperty!.isInvesting = true;
+                }
+                this.propertyRegistry.set(this.selectedProperty!.id, this.selectedProperty!)
+            })
+        }catch (error) {
+            console.log(error);
+        }finally {
+            runInAction(() => this.loading = false);
+        }
+    }
+
+    cancelPropertyToggle = async () => {
+        this.loading = true;
+        try{
+            await agent.Properties.invest(this.selectedProperty!.id);
+            runInAction(() => {
+                this.selectedProperty!.isCancelled = !this.selectedProperty?.isCancelled;
+                this.propertyRegistry.set(this.selectedProperty!.id, this.selectedProperty!);
+            })
+        }catch (error) {
+            console.log(error);
+        }finally{
+            runInAction(() => this.loading = false);
         }
     }
   

@@ -2,8 +2,9 @@ import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
 import { Link } from 'react-router-dom';
-import {Button, Header, Item, Segment, Image} from 'semantic-ui-react'
+import {Button, Header, Item, Segment, Image, Label} from 'semantic-ui-react'
 import { Property } from '../../../app/models/property';
+import { useStore } from '../../../app/stores/store';
 
 
 const propertyImageStyle = {
@@ -24,9 +25,14 @@ interface Props {
 }
 
 export default observer (function PropertyDetailedHeader({property}: Props) {
+    const {propertyStore: {updateInvestment, loading, cancelPropertyToggle}} = useStore();
     return (
         <Segment.Group>
             <Segment basic attached='top' style={{padding: '0'}}>
+                {property.isCancelled &&
+                    <Label style={{position: 'absolute', zIndex: 1000, left: -14, top: 20}} 
+                        ribbon color='red' content='Camcelled'></Label>
+                }
                 <Image src={`/assets/categoryImages/${property.location}.jpg`} fluid style={propertyImageStyle}/>
                 <Segment style={propertyImageTextStyle} basic>
                     <Item.Group>
@@ -39,7 +45,7 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
                                 />
                                 <p>{format(property.pDate!, 'dd MMM yyyy')}</p>
                                 <p>
-                                    Hosted by <strong>Bob</strong>
+                                    Hosted by <strong><Link to={`/profile/${property.host?.displayName}`}>{property.host?.displayName}</Link></strong>
                                 </p>
                             </Item.Content>
                         </Item>
@@ -47,11 +53,34 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
                 </Segment>
             </Segment>
             <Segment clearing attached='bottom'>
-                <Button color='teal'>Invest Property</Button>
-                <Button>Cancel Invest</Button>
-                <Button as={Link} to={`/manage/${property.id}`} color='orange' floated='right'>
-                    Manage Investment
-                </Button>
+                {property.isHost ? (
+                    <>
+                        <Button
+                            color={property.isCancelled ? 'green' : 'red'}
+                            floated='left'
+                            basic
+                            content={property.isCancelled ? 'Re-activate Property' : 'Cancel Property'}
+                            onClick={cancelPropertyToggle}
+                            loading={loading}
+                        />
+                        <Button as={Link} 
+                            disabled={property.isCancelled}
+                            to={`/manage/${property.id}`} 
+                            color='orange'
+                            floated='right'>
+                            Manage Investment
+                        </Button>
+                    </>
+
+                ) : property.isInvesting ? (
+                    <Button loading={loading} onClick={updateInvestment}>Cancel Invest</Button>
+                ) : (
+                    <Button disabled={property.isCancelled} 
+                        loading={loading} onClick={updateInvestment} color='teal'>
+                            Invest Now
+                    </Button>
+                )}
+                
             </Segment>
         </Segment.Group>
     )

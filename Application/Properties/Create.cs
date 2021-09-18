@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Interfaces;
+using Application.Properties;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -34,11 +35,12 @@ namespace Application.Properties
                 _userAccessor = userAccessor;
                 _context = context;
             }
+
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(
-                    x => x.UserName == _userAccessor.GetUsername());
-                
+                var user = await _context.Users.FirstOrDefaultAsync(x => 
+                    x.UserName == _userAccessor.GetUsername());
+
                 var investor = new PropertyInvestor
                 {
                     AppUser = user,
@@ -55,7 +57,6 @@ namespace Application.Properties
                 if (!result) return Result<Unit>.Failure("Failed to create property");
 
                 return Result<Unit>.Success(Unit.Value);
-
             }
         }
     }

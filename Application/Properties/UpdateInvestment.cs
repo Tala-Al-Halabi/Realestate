@@ -1,3 +1,4 @@
+
 using System;
 using System.Linq;
 using System.Threading;
@@ -33,17 +34,21 @@ namespace Application.Properties
                 var property = await _context.Properties
                     .Include(a => a.Investors).ThenInclude(u => u.AppUser)
                     .SingleOrDefaultAsync(x => x.Id == request.Id);
-                
+
                 if (property == null) return null;
-                var user = await _context.Users.FirstOrDefaultAsync(x =>
-                x.UserName == _userAccessor.GetUsername());
+
+                var user = await _context.Users.FirstOrDefaultAsync(x => 
+                    x.UserName == _userAccessor.GetUsername());
+
                 if (user == null) return null;
 
                 var hostUsername = property.Investors.FirstOrDefault(x => x.IsHost)?.AppUser?.UserName;
-                var investment = property.Investors.FirstOrDefault(x => x.AppUser.UserName == user.UserName );
+
+                var investment = property.Investors.FirstOrDefault(x => x.AppUser.UserName == user.UserName);
+
                 if (investment != null && hostUsername == user.UserName)
                     property.IsCancelled = !property.IsCancelled;
-                
+
                 if (investment != null && hostUsername != user.UserName)
                     property.Investors.Remove(investment);
 

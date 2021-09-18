@@ -1,3 +1,4 @@
+  
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,12 +28,13 @@ namespace Application.Properties
                 _mapper = mapper;
                 _context = context;
             }
+
             public async Task<Result<PropertyDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-
                 var property = await _context.Properties
                     .ProjectTo<PropertyDto>(_mapper.ConfigurationProvider)
                     .FirstOrDefaultAsync(x => x.Id == request.Id);
+
                 return Result<PropertyDto>.Success(property);
             }
         }

@@ -1,11 +1,10 @@
-import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React from 'react'
 import { Link } from 'react-router-dom';
-import {Button, Header, Item, Segment, Image, Label} from 'semantic-ui-react'
-import { Property } from '../../../app/models/property';
+import { Button, Header, Item, Segment, Image, Label } from 'semantic-ui-react'
+import { format } from 'date-fns';
 import { useStore } from '../../../app/stores/store';
-
+import { Property } from '../../../app/models/property';
 
 const propertyImageStyle = {
     filter: 'brightness(30%)'
@@ -24,16 +23,16 @@ interface Props {
     property: Property
 }
 
-export default observer (function PropertyDetailedHeader({property}: Props) {
-    const {propertyStore: {updateInvestment, loading, cancelPropertyToggle}} = useStore();
+export default observer(function ActivityDetailedHeader({ property }: Props) {
+    const { propertyStore: { updateInvestment, loading, cancelPropertyToggle } } = useStore();
     return (
         <Segment.Group>
-            <Segment basic attached='top' style={{padding: '0'}}>
+            <Segment basic attached='top' style={{ padding: '0' }}>
                 {property.isCancelled &&
-                    <Label style={{position: 'absolute', zIndex: 1000, left: -14, top: 20}} 
-                        ribbon color='red' content='Camcelled'></Label>
+                    <Label style={{ position: 'absolute', zIndex: 1000, left: -14, top: 20 }}
+                        ribbon color='red' content='Cancelled' />
                 }
-                <Image src={`/assets/categoryImages/${property.location}.jpg`} fluid style={propertyImageStyle}/>
+                <Image src={`/assets/categoryImages/${property.location}.jpg`} fluid style={propertyImageStyle} />
                 <Segment style={propertyImageTextStyle} basic>
                     <Item.Group>
                         <Item>
@@ -41,11 +40,11 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
                                 <Header
                                     size='huge'
                                     content={property.title}
-                                    style={{color: 'white'}}
+                                    style={{ color: 'white' }}
                                 />
                                 <p>{format(property.pDate!, 'dd MMM yyyy')}</p>
                                 <p>
-                                    Hosted by <strong><Link to={`/profile/${property.host?.displayName}`}>{property.host?.displayName}</Link></strong>
+                                    Hosted by <strong><Link to={`/profile/${property.host?.username}`}>{property.host?.displayName}</Link></strong>
                                 </p>
                             </Item.Content>
                         </Item>
@@ -59,28 +58,27 @@ export default observer (function PropertyDetailedHeader({property}: Props) {
                             color={property.isCancelled ? 'green' : 'red'}
                             floated='left'
                             basic
-                            content={property.isCancelled ? 'Re-activate Property' : 'Cancel Property'}
+                            content={property.isCancelled ? 'Re-activate Activity' : 'Cancel Activity'}
                             onClick={cancelPropertyToggle}
                             loading={loading}
                         />
-                        <Button as={Link} 
+                        <Button as={Link}
                             disabled={property.isCancelled}
-                            to={`/manage/${property.id}`} 
+                            to={`/manage/${property.id}`}
                             color='orange'
                             floated='right'>
-                            Manage Investment
+                            Manage Event
                         </Button>
                     </>
 
                 ) : property.isInvesting ? (
-                    <Button loading={loading} onClick={updateInvestment}>Cancel Invest</Button>
+                    <Button loading={loading} onClick={updateInvestment}>Cancel attendance</Button>
                 ) : (
-                    <Button disabled={property.isCancelled} 
+                    <Button disabled={property.isCancelled}
                         loading={loading} onClick={updateInvestment} color='teal'>
-                            Invest Now
+                            Join Activity
                     </Button>
                 )}
-                
             </Segment>
         </Segment.Group>
     )

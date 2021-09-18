@@ -157,26 +157,25 @@ export default class PropertyStore{
                 }
                 this.propertyRegistry.set(this.selectedProperty!.id, this.selectedProperty!)
             })
-        }catch (error) {
+        } catch (error) {
             console.log(error);
-        }finally {
+        } finally {
             runInAction(() => this.loading = false);
         }
     }
 
     cancelPropertyToggle = async () => {
         this.loading = true;
-        try{
+        try {
             await agent.Properties.invest(this.selectedProperty!.id);
             runInAction(() => {
                 this.selectedProperty!.isCancelled = !this.selectedProperty?.isCancelled;
                 this.propertyRegistry.set(this.selectedProperty!.id, this.selectedProperty!);
             })
-        }catch (error) {
+        } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             runInAction(() => this.loading = false);
         }
     }
-  
 }

@@ -37,7 +37,8 @@ namespace API.Extensions
                         ValidateAudience = false
                     };
                 });
-            services.AddAuthorization(opt => 
+
+            services.AddAuthorization(opt =>
             {
                 opt.AddPolicy("IsPropertyHost", policy =>
                 {
@@ -50,4 +51,4 @@ namespace API.Extensions
             return services;
         }
     }
-} 
+}

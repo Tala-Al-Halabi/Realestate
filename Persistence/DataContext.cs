@@ -12,7 +12,7 @@ namespace Persistence
 
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyInvestor> PropertyInvestors { get; set; }
-
+        public DbSet<Photo> Photos { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

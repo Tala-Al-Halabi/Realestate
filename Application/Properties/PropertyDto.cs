@@ -22,6 +22,6 @@ namespace Application.Properties
         public double price { get; set; }
         public string HostUsername { get; set; }
         public bool IsCancelled { get; set; }
-        public ICollection<Profile> Investors { get; set; }
+        public ICollection<InvestorDto> Investors { get; set; }
     }
 }

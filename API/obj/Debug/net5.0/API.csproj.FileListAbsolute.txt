@@ -81,3 +81,5 @@ C:\Users\Dell\realestate\API\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.
 C:\Users\Dell\realestate\API\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\Dell\realestate\API\bin\Debug\net5.0\Infrastructure.dll
 C:\Users\Dell\realestate\API\bin\Debug\net5.0\Infrastructure.pdb
+C:\Users\Dell\realestate\API\bin\Debug\net5.0\CloudinaryDotNet.dll
+C:\Users\Dell\realestate\API\bin\Debug\net5.0\Newtonsoft.Json.dll

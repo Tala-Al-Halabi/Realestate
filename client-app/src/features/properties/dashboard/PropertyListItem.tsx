@@ -4,12 +4,13 @@ import { Button, Icon, Item, Label, Segment } from 'semantic-ui-react';
 import {format} from 'date-fns';
 import { Property } from '../../../app/models/property';
 import PropertyListItemInvestor from './PropertyListItemInvestor';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
     property: Property
 }
 
-export default function PropertyListItem({ property }: Props) {
+    export default observer( function PropertyListItem({ property }: Props) {
 
     return (
         <Segment.Group>
@@ -19,12 +20,13 @@ export default function PropertyListItem({ property }: Props) {
                 }
                 <Item.Group>
                     <Item>
-                        <Item.Image style={{marginBottom: 3}} size='tiny' circular src='/assets/user.png' />
+                        <Item.Image style={{marginBottom: 3}} size='tiny' circular src={property.host?.image || '/assets/user.png'} />
                         <Item.Content>
                             <Item.Header as={Link} to={`/properties/${property.id}`}>
                                 {property.title}
                             </Item.Header>
-                            <Item.Description>Hosted by {property.host?.displayName}</Item.Description>
+                            <Item.Description>Hosted by <Link to={`/profiles/${property.hostUsername}`}>{property.host?.displayName}</Link>
+                            </Item.Description>
                             {property.isHost && (
                                 <Item.Description>
                                     <Label basic color='orange'>
@@ -35,7 +37,7 @@ export default function PropertyListItem({ property }: Props) {
                             {property.isInvesting && !property.isHost && (
                                 <Item.Description>
                                     <Label basic color='green'>
-                                        You are investing in this Property
+                                        You are investing this activity
                                     </Label>
                                 </Item.Description>
                             )}
@@ -64,4 +66,4 @@ export default function PropertyListItem({ property }: Props) {
             </Segment>
         </Segment.Group>
     )
-}
+})

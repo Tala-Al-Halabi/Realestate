@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
-using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
@@ -36,7 +35,7 @@ namespace Application.Profiles
                 if (user == null) return null;
 
                 return Result<Profile>.Success(user);
-             }
+            }
         }
     }
 }

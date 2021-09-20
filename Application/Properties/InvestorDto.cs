@@ -1,3 +1,4 @@
+  
 namespace Application.Properties
 {
     public class InvestorDto

@@ -1,21 +1,24 @@
 import { createContext, useContext } from "react";
+import PropertyStore from "./propertyStore";
 import CommonStore from "./commonStore";
 import ModalStore from "./modalStore";
-import PropertyStore from "./propertyStore";
+import ProfileStore from "./profileStore";
 import UserStore from "./userStore";
 
-interface Store{
+interface Store {
     propertyStore: PropertyStore;
     commonStore: CommonStore;
     userStore: UserStore;
     modalStore: ModalStore;
+    profileStore: ProfileStore;
 }
 
 export const store: Store = {
-    propertyStore: new  PropertyStore(),
+    propertyStore: new PropertyStore(),
     commonStore: new CommonStore(),
     userStore: new UserStore(),
-    modalStore: new ModalStore()
+    modalStore: new ModalStore(),
+    profileStore: new ProfileStore()
 }
 
 export const StoreContext = createContext(store);

@@ -24,9 +24,9 @@ export default class UserStore {
             store.modalStore.closeModal();
         } catch (error) {
             throw error;
-            
         }
     }
+
     logout = () => {
         store.commonStore.setToken(null);
         window.localStorage.removeItem('jwt');
@@ -52,7 +52,14 @@ export default class UserStore {
             store.modalStore.closeModal();
         } catch (error) {
             throw error;
-            
         }
+    }
+
+    setImage = (image: string) => {
+        if (this.user) this.user.image = image;
+    } 
+
+    setDisplayName = (name: string) => {
+        if (this.user) this.user.displayName = name;
     }
 }

@@ -21,6 +21,7 @@ namespace Domain
         public double price { get; set; }
         public bool IsCancelled { get; set; }
         public ICollection<PropertyInvestor> Investors { get; set; } = new List<PropertyInvestor>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 
     }
 

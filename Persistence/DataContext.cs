@@ -13,6 +13,7 @@ namespace Persistence
         public DbSet<Property> Properties { get; set; }
         public DbSet<PropertyInvestor> PropertyInvestors { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +30,11 @@ namespace Persistence
                 .HasOne(u => u.Property)
                 .WithMany(a => a.Investors)
                 .HasForeignKey(aa => aa.PropertyId);
+
+            builder.Entity<Comment>()
+                .HasOne(a => a.Property)
+                .WithMany(c => c.Comments)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

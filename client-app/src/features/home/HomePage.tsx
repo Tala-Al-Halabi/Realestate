@@ -12,15 +12,12 @@ export default observer( function HomePage() {
        <Segment inverted textAlign='center' vertical className='masthead'>
            <Container text>
                <Header as='h1' inverted>
-                   <Image size='massive' src='/assets/logo.png' alt='logo' style={{marginBotton: 12}} />
-                   Realestate
+                   <Image size='massive' src='/assets/logo.png' alt='logo' style={{marginBottom: 12}} />
+                   Boyouti in Lebanon
                </Header>
                {userStore.isLoggedIn ? (
                    <>
-                    <Header as='h2' inverted content='Welcome to Realestates' />
-                    <Button as={Link} to='/properties' size='huge' inverted>
-                    Go to Properties!
-                    </Button>
+                    <Header as='h2' inverted content='Welcome to Boyouti' />
                    </>
                ): (
                    <>
@@ -32,6 +29,9 @@ export default observer( function HomePage() {
                         </Button>
                         </>
                     )}
+                     <Button as={Link} to='/properties' size='huge' inverted>
+                    Go to Properties!
+                    </Button>
 
            </Container>
        </Segment>

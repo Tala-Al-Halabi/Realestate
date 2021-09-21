@@ -178,4 +178,21 @@ export default class PropertyStore{
             runInAction(() => this.loading = false);
         }
     }
+
+    //updateAttendeeFollowing = (username: string) => {
+    //    this.propertyRegistry.forEach(property => {
+    //        property.investors.forEach(investor => {
+    //            if (investor.username === username) {
+    //              investor.following ? investor.followersCount-- : investor.followersCount++;
+    //                investor.following = !investor.following;
+    //            }
+    //        })
+    //    })
+    //}
+    //}
+
+    clearSelectedProperty = () => {
+        this.selectedProperty = undefined;
+    }
+
 }

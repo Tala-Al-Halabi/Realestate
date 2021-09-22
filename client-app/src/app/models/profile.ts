@@ -1,3 +1,4 @@
+
 import { User } from "./user";
 
 export interface Profile {
@@ -23,4 +24,11 @@ export interface Photo {
     id: string;
     url: string;
     isMain: boolean;
+}
+
+export interface UserProperty {
+    id: string;
+    title: string;
+    itype: string;
+    date: Date;
 }

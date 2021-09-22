@@ -1,19 +1,75 @@
-import { format } from "date-fns";
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Profile } from "../models/profile";
-import { Property, PropertyFormValues } from "../models/property";
+import {format} from 'date-fns';
 import { store } from "./store";
-export default class PropertyStore{
-   propertyRegistry = new Map<string, Property>();
-   selectedProperty: Property | undefined = undefined;
-   editMode = false;
-   loading = false;
-   loadingInitial = false;
+import { Profile } from "../models/profile";
+import { Pagination, PagingParams } from "../models/pagination";
+import { Property, PropertyFormValues } from "../models/property";
 
+export default class PropertyStore {
+    propertyRegistry = new Map<string, Property>();
+    selectedProperty: Property | undefined = undefined;
+    editMode = false;
+    loading = false;
+    loadingInitial = false;
+    pagination: Pagination | null = null;
+    pagingParams = new PagingParams();
+    predicate = new Map().set('all', true);
 
     constructor() {
-        makeAutoObservable(this)
+        makeAutoObservable(this);
+
+        reaction(
+            () => this.predicate.keys(),
+            () => {
+                this.pagingParams = new PagingParams();
+                this.propertyRegistry.clear();
+                this.loadProperties();
+            }
+        )
+    }
+
+    setPagingParams = (pagingParams: PagingParams) => {
+        this.pagingParams = pagingParams;
+    }
+
+    setPredicate = (predicate: string, value: string | Date) => {
+        const resetPredicate = () => {
+            this.predicate.forEach((value, key) => {
+                if (key !== 'startDate') this.predicate.delete(key);
+            })
+        }
+        switch (predicate) {
+            case 'all':
+                resetPredicate();
+                this.predicate.set('all', true);
+                break;
+            case 'isInvesting':
+                resetPredicate();
+                this.predicate.set('isInvesting', true);
+                break;
+            case 'isHost':
+                resetPredicate();
+                this.predicate.set('isHost', true);
+                break;
+            case 'startDate':
+                this.predicate.delete('startDate');
+                this.predicate.set('startDate', value);
+        }
+    } 
+
+    get axiosParams() {
+        const params = new URLSearchParams();
+        params.append('pageNumber', this.pagingParams.pageNumber.toString());
+        params.append('pageSize', this.pagingParams.pageSize.toString());
+        this.predicate.forEach((value, key) => {
+            if (key === 'startDate') {
+                params.append(key, (value as Date).toISOString())
+            } else {
+                params.append(key, value);
+            }
+        })
+        return params;
     }
 
     get propertiesByDate() {
@@ -31,32 +87,36 @@ export default class PropertyStore{
         )
     }
 
-    loadProperties =async () => {
+    loadProperties = async () => {
         this.loadingInitial = true;
-        try{
-            const properties = await agent.Properties.list();
-            properties.forEach(property => {
+        try {
+            const result = await agent.Properties.list(this.axiosParams);
+            result.data.forEach(property => {
                 this.setProperty(property);
             })
+            this.setPagination(result.pagination);
             this.setLoadingInitial(false);
-            
-        } catch(error){
+        } catch (error) {
             console.log(error);
             this.setLoadingInitial(false);
         }
     }
 
+    setPagination = (pagination: Pagination) => {
+        this.pagination = pagination;
+    }
+
     loadProperty = async (id: string) => {
         let property = this.getProperty(id);
-        if(property) {
+        if (property) {
             this.selectedProperty = property;
             return property;
-        } else{
+        } else {
             this.loadingInitial = true;
-            try{
+            try {
                 property = await agent.Properties.details(id);
                 this.setProperty(property);
-                runInAction(() =>{
+                runInAction(() => {
                     this.selectedProperty = property;
                 })
                 this.setLoadingInitial(false);
@@ -75,26 +135,24 @@ export default class PropertyStore{
                 a => a.username === user.username
             )
             property.isHost = property.hostUsername === user.username;
-            property.host = property.investors?.find( x => x.username === property.hostUsername);
+            property.host = property.investors?.find(x => x.username === property.hostUsername);
         }
         property.pDate = new Date(property.pDate!);
         this.propertyRegistry.set(property.id, property);
-
     }
 
-    private getProperty =(id: string) => {
+    private getProperty = (id: string) => {
         return this.propertyRegistry.get(id);
     }
 
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
-
     }
 
     createProperty = async (property: PropertyFormValues) => {
         const user = store.userStore.user;
         const investor = new Profile(user!);
-        try{
+        try {
             await agent.Properties.create(property);
             const newProperty = new Property(property);
             newProperty.hostUsername = user!.username;
@@ -103,36 +161,35 @@ export default class PropertyStore{
             runInAction(() => {
                 this.selectedProperty = newProperty;
             })
-        }catch (error) {
-            console.log(error); 
+        } catch (error) {
+            console.log(error);
         }
     }
 
-    updateProperty =  async (property: PropertyFormValues) => {
-        try{
+    updateProperty = async (property: PropertyFormValues) => {
+        try {
             await agent.Properties.update(property);
             runInAction(() => {
-                if(property.id) {
+                if (property.id) {
                     let updatedProperty = {...this.getProperty(property.id), ...property}
                     this.propertyRegistry.set(property.id, updatedProperty as Property);
                     this.selectedProperty = updatedProperty as Property;
-                }
+                } 
             })
-        }catch (error) {
-            console.log(error); 
+        } catch (error) {
+            console.log(error);
         }
     }
 
     deleteProperty = async (id: string) => {
         this.loading = true;
-        try{
+        try {
             await agent.Properties.delete(id);
             runInAction(() => {
                 this.propertyRegistry.delete(id);
                 this.loading = false;
             })
-
-        }catch (error){
+        } catch (error) {
             console.log(error);
             runInAction(() => {
                 this.loading = false;
@@ -183,16 +240,14 @@ export default class PropertyStore{
         this.propertyRegistry.forEach(property => {
             property.investors.forEach(investor => {
                 if (investor.username === username) {
-                  investor.following ? investor.followersCount-- : investor.followersCount++;
+                    investor.following ? investor.followersCount-- : investor.followersCount++;
                     investor.following = !investor.following;
                 }
             })
         })
     }
-    
 
     clearSelectedProperty = () => {
         this.selectedProperty = undefined;
     }
-
 }

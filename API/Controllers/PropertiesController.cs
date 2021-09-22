@@ -1,21 +1,18 @@
 using System;
-using Application.Properties;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Application.Properties;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
     public class PropertiesController : BaseApiController
     {
-        
         [HttpGet]
-
-        public async Task<IActionResult> GetProperties()
+        public async Task<IActionResult> GetProperties([FromQuery] PropertyParams param)
         {
-            return HandleResult(await Mediator.Send(new List.Query()));
+            return HandlePagedResult(await Mediator.Send(new List.Query{Params = param}));
         }
 
         [HttpGet("{id}")]
@@ -24,22 +21,23 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Details.Query{Id = id}));
         }
         
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProperty(Property property)
         {
             return HandleResult(await Mediator.Send(new Create.Command {Property = property}));
         }
+
         [Authorize(Policy = "IsPropertyHost")]
         [HttpPut("{id}")]
-
         public async Task<IActionResult> EditProperty(Guid id, Property property)
         {
             property.Id = id;
             return HandleResult(await Mediator.Send(new Edit.Command{Property = property}));
         }
 
-        [HttpDelete("{id}")]
         [Authorize(Policy = "IsPropertyHost")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProperty(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.Command{Id = id}));
@@ -51,4 +49,4 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new UpdateInvestment.Command{Id = id}));
         }
     }
-} 
+}

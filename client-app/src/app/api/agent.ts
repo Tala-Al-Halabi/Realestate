@@ -1,8 +1,8 @@
-   
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { history } from '../..';
-import { Photo, Profile } from '../models/profile';
+import { PaginatedResult } from '../models/pagination';
+import { Photo, Profile, UserProperty } from '../models/profile';
 import { Property, PropertyFormValues } from '../models/property';
 import { User, UserFormValues } from '../models/user';
 import { store } from '../stores/store';
@@ -23,9 +23,14 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(async response => {
     await sleep(1000);
+    const pagination = response.headers['pagination'];
+    if (pagination) {
+        response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+        return response as AxiosResponse<PaginatedResult<any>>
+    }
     return response;
 }, (error: AxiosError) => {
-    const {data, status, config} = error.response!;
+    const { data, status, config } = error.response!;
     switch (status) {
         case 400:
             if (config.method === 'get' && data.errors.hasOwnProperty('id')) {
@@ -67,7 +72,8 @@ const requests = {
 }
 
 const Properties = {
-    list: () => requests.get<Property[]>('/properties'),
+    list: (params: URLSearchParams) => axios.get<PaginatedResult<Property[]>>('/properties', { params })
+        .then(responseBody),
     details: (id: string) => requests.get<Property>(`/properties/${id}`),
     create: (property: PropertyFormValues) => requests.post<void>('/properties', property),
     update: (property: PropertyFormValues) => requests.put<void>(`/properties/${property.id}`, property),
@@ -87,15 +93,17 @@ const Profiles = {
         let formData = new FormData();
         formData.append('File', file);
         return axios.post<Photo>('photos', formData, {
-            headers: {'Content-type': 'multipart/form-data'}
+            headers: { 'Content-type': 'multipart/form-data' }
         })
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.del(`/photos/${id}`),
     updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`, profile),
     updateFollowing: (username: string) => requests.post(`/follow/${username}`, {}),
-    listFollowings: (username: string, predicate: string) => 
-        requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
+    listFollowings: (username: string, predicate: string) =>
+        requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`),
+    listProperties: (username: string, predicate: string) =>
+        requests.get<UserProperty[]>(`/profiles/${username}/properties?predicate=${predicate}`)
 }
 
 const agent = {
